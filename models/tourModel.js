@@ -45,7 +45,7 @@ const tourSchema = new mongoose.Schema(
     },
     priceDiscount: {
       type: Number,
-      //custom validation
+      //custom validation only works on save()
       validate: {
         validator: function (value) {
           return value < this.price;
