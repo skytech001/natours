@@ -1,3 +1,4 @@
+const { findByIdAndDelete, findByIdAndUpdate } = require("../models/userModel");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
@@ -35,12 +36,19 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
-
   res.status(200).json({
     status: "success",
     data: {
       user: updatedUser,
     },
+  });
+});
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.user.id, { active: false });
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
 });
 
