@@ -24,6 +24,7 @@ const createSendToken = (user, statusCode, res) => {
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined;
+
   res.status(statusCode).json({
     status: "success",
     token,
@@ -57,11 +58,21 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  res.cookie("jwt", "loggedout", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: "success" });
+};
+
 exports.isAuth = catchAsync(async (req, res, next) => {
   let token;
   const authorization = req.headers.authorization;
   if (authorization && authorization.startsWith("Bearer")) {
     token = authorization.split(" ")[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   } else {
     return next(
       new AppError("You are not login. Please login to get access", 401)
@@ -83,6 +94,32 @@ exports.isAuth = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+//check if user is logged in
+exports.isLoggedIn = async (req, res, next) => {
+  if (req.cookies.jwt) {
+    try {
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
+
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) {
+        return next();
+      }
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+      //res.locals - makes currentuser accessible as a local variable in pug.
+      res.locals.user = currentUser;
+      return next();
+    } catch (err) {
+      return next();
+    }
+  }
+  next();
+};
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
