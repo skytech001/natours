@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-const sendEmail = require("../utils/email");
+const Email = require("../utils/email");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -42,6 +42,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     role: req.body.role,
   });
+  const url = `${req.protocol}://${req.get("host")}/me`;
+
+  await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, res);
 });
@@ -92,6 +95,7 @@ exports.isAuth = catchAsync(async (req, res, next) => {
     );
   }
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 
@@ -103,7 +107,6 @@ exports.isLoggedIn = async (req, res, next) => {
         req.cookies.jwt,
         process.env.JWT_SECRET
       );
-
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) {
         return next();
@@ -137,25 +140,20 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError("There is no user with email address.", 404));
   }
+
   //generate random token
   const resetToken = user.createPasswordResetToken();
+
   //save the doc without validation
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/users/resetPassword/${resetToken}`;
-
-  const message = `You can reset your password using the link below. 
-    ${resetURL} \n 
-    If you didn't forget your password, please ignore this message.`;
-
+  //send email to user
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "Your password reset token (valid for 10 mins)",
-      message,
-    });
+    const resetURL = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/users/resetPassword/${resetToken}`;
+
+    await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: "success",
@@ -196,7 +194,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
 
   await user.save();
-
   createSendToken(user, 200, res);
 });
 

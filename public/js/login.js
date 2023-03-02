@@ -24,7 +24,7 @@ const login = async (email, password) => {
     showAlert("error", err.response.data.message);
   }
 };
-const form = document.querySelector(".form");
+const form = document.querySelector(".form--login");
 if (form) {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -37,7 +37,10 @@ if (form) {
 const logout = async () => {
   try {
     const res = await axios.get("http://localhost:5000/api/v1/users/logout");
-    if (res.data.status === "success") location.reload(true);
+    if (res.data.status === "success" && window.location.pathname === "/me") {
+      return location.assign("/");
+    }
+    location.reload(true);
   } catch (err) {
     showAlert("error", "Error logging out! Try later");
   }
