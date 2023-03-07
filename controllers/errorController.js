@@ -50,6 +50,7 @@ const sendErrorProd = (err, req, res) => {
         message: err.message,
       });
     }
+    console.log(err);
     //programming error or unknown errors api calls
     console.error("Error", err);
     return res.status(500).json({
@@ -77,10 +78,10 @@ const sendErrorProd = (err, req, res) => {
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
+  console.log(process.env.NODE_ENV);
 
-  if (process.env.NODE_ENV === "development") {
-    sendErrorDev(err, req, res);
-  } else {
+  if (process.env.NODE_ENV === "production") {
+    console.log("hello prod");
     console.log(err.name);
     let error = { ...err };
     if (err.name === "CastError") error = handleCastErrorDB(err);
@@ -89,5 +90,9 @@ module.exports = (err, req, res, next) => {
     if (err.name === "JsonWebTokenError") error = handleJwtError();
     if (err.name === "TokenExpiredError") error = handleJwtExpiredError();
     sendErrorProd(error, req, res);
+  } else {
+    let error = { ...err };
+    console.log("hello dev");
+    sendErrorDev(error, req, res);
   }
 };

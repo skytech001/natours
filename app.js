@@ -12,6 +12,7 @@ const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
 const viewRouter = require("./routes/viewRoutes");
+const bookingRouter = require("./routes/bookingRoute");
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const scriptSrcUrls = [
   "https://api.tiles.mapbox.com/",
   "https://api.mapbox.com/",
+  "https://js.stripe.com/v3/",
   "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js",
 ];
 const styleSrcUrls = [
@@ -51,6 +53,7 @@ app.use(
       objectSrc: [],
       imgSrc: ["'self'", "blob:", "data:"],
       fontSrc: ["'self'", ...fontSrcUrls],
+      frameSrc: ["self", "https://js.stripe.com/v3/"],
     },
   })
 );
@@ -102,6 +105,7 @@ app.use("/", viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/bookings", bookingRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Cant find ${req.originalUrl} on this server`, 404));
