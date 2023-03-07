@@ -29,7 +29,6 @@ const server = app.listen(port, () => {
 //Unhandled rejection in promises(async code)
 process.on("unhandledRejection", (err) => {
   console.log("UNHANDLED REJECTION! Shutting down...");
-  console.log(err);
   server.close(() => {
     process.exit(1);
   });

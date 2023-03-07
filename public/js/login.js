@@ -12,10 +12,10 @@ const showAlert = (type, msg) => {
 
 const login = async (email, password) => {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/v1/users/login",
-      { email, password }
-    );
+    const response = await axios.post("/api/v1/users/login", {
+      email,
+      password,
+    });
     if (response.data.status === "success") {
       showAlert("success", "You are logged in successfully");
       location.assign("/");
@@ -36,7 +36,7 @@ if (form) {
 
 const logout = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/api/v1/users/logout");
+    const res = await axios.get("/api/v1/users/logout");
     if (res.data.status === "success" && window.location.pathname === "/me") {
       return location.assign("/");
     }

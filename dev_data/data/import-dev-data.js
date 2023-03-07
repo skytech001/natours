@@ -8,13 +8,13 @@ const Review = require("../../models/reviewModel");
 dotenv.config({ path: "./config.env" });
 
 const db = process.env.DATABASE;
-console.log(db);
+
 mongoose
   .connect(db, {
     useNewUrlParser: true,
   })
   .then(() => console.log("db connection successful"))
-  .catch((error) => console.log(error));
+  .catch((error) => console.error(error));
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, "utf-8"));
 const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, "utf-8"));
