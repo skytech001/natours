@@ -4,11 +4,13 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "npm install -g serve; serve -s build",
+    "heroku-postbuild": "npm run build",
     "dev": "set NODE_ENV=development && nodemon server.js",
     "prod": "set NODE_ENV=production && nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "build:js": "parcel build ./public/js" 
   },
   "repository": {
     "type": "git",
