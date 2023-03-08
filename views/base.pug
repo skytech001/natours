@@ -11,7 +11,7 @@ html
             
             
 
-    body
+    body(data-alert=`${alert ? alert : ''}`)
         // Header
         include _header
         
@@ -21,11 +21,13 @@ html
         //FOOTER
         include _footer
 
-        script(src="https://js.stripe.com/v3/")
-        script(src='/js/mapbox.js')
-        script(src='/js/login.js')
-        script(src='/js/updateSettings.js')
-        script(src='/js/stripe.js')
-        script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+        //- script(src="https://js.stripe.com/v3/")
+        //- script(src='/js/mapbox.js')
+        //- script(src='/js/login.js')
+        //- script(src='/js/updateSettings.js')
+        //- script(src='/js/stripe.js')
+        //- script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+        script(src='https://js.stripe.com/v3/')
+        script(src='/js/bundles/index.js')
         
         

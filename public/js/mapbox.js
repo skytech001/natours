@@ -1,25 +1,24 @@
-if (window.location.pathname.startsWith("/tour")) {
-  const locations = JSON.parse(
-    document.getElementById("map").dataset.locations
-  );
-
+export const displayMap = (locations) => {
   mapboxgl.accessToken =
     "pk.eyJ1Ijoic2t5dGVjaDAwMSIsImEiOiJjbGVnY3dzcDQwZm93M3hyeDBnMm8wbXNsIn0.WQEZ9bPgyl8ek7ZWIe9gUA";
 
   var map = new mapboxgl.Map({
     container: "map",
-    style: "mapbox://styles/skytech001/clegeb2po000401o8m7939bex",
+    style: "mapbox://styles/jonasschmedtmann/cjvi9q8jd04mi1cpgmg7ev3dy",
     scrollZoom: false,
+    // center: [-118.113491, 34.111745],
+    // zoom: 10,
+    // interactive: false
   });
 
   const bounds = new mapboxgl.LngLatBounds();
 
   locations.forEach((loc) => {
-    //Create marker
+    // Create marker
     const el = document.createElement("div");
     el.className = "marker";
 
-    //Add marker
+    // Add marker
     new mapboxgl.Marker({
       element: el,
       anchor: "bottom",
@@ -27,16 +26,18 @@ if (window.location.pathname.startsWith("/tour")) {
       .setLngLat(loc.coordinates)
       .addTo(map);
 
-    //   new mapboxgl.Popup({
-    //     offset: 30,
-    //   })
-    //     .setLngLat(lac.coordinates)
-    //     .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
-    //     .addTo(map);
+    // Add popup
+    new mapboxgl.Popup({
+      offset: 30,
+    })
+      .setLngLat(loc.coordinates)
+      .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
+      .addTo(map);
 
-    //Extends map bounds to include current location
+    // Extend map bounds to include current location
     bounds.extend(loc.coordinates);
   });
+
   map.fitBounds(bounds, {
     padding: {
       top: 200,
@@ -45,4 +46,4 @@ if (window.location.pathname.startsWith("/tour")) {
       right: 100,
     },
   });
-}
+};
