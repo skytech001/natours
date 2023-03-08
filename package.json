@@ -9,12 +9,12 @@
 "browserslist": "> 0.25%",
   "scripts": {
     "start": "node server.js",
-    "dev": "set NODE_ENV=development && nodemon server.js",
+    "dev": "nodemon server.js",
     "prod": "set NODE_ENV=production && nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "debug": "ndb server.js",
     "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundles",
-    "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundles"
+    "build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundles"
   },
   "repository": {
     "type": "git",
