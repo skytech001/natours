@@ -1,4 +1,5 @@
 const path = require("path");
+const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
@@ -24,6 +25,11 @@ app.enable("trust proxy");
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
+app.use(cors());
+//handle browsers pre-flight phase for cross origin request
+app.options("*", cors());
+
+//serving static files
 app.use(express.static(path.join(__dirname, "public")));
 
 //set security HTTP headers
