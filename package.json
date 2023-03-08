@@ -9,7 +9,7 @@
     "prod": "set NODE_ENV=production && nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "debug": "ndb server.js",
-    "build": "npm install && npm run build"
+    "build": "npm run build"
   },
   "repository": {
     "type": "git",
