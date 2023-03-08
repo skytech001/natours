@@ -33,3 +33,11 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
+
+//HANDLING  HEROKU DAILY SIGTERM(REBOOT REQUEST)
+process.on("SIGTERM", () => {
+  console.log("SIGTERM RECIEVED!!. Shutting down gracefully");
+  server.close(() => {
+    console.log("Process terminated!");
+  });
+});
