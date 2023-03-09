@@ -16,6 +16,8 @@ const reviewRouter = require("./routes/reviewRoutes");
 const viewRouter = require("./routes/viewRoutes");
 const bookingRouter = require("./routes/bookingRoute");
 const cookieParser = require("cookie-parser");
+const { webhookCheckout } = require("./controllers/bookingController");
+const { application } = require("express");
 
 const app = express();
 
@@ -77,6 +79,13 @@ const limiter = rateLimit({
   message: "Too many request from this IP, Please try again in one hour.",
 });
 app.use("/api", limiter);
+
+//strip webhook. here before the bodyparser bcos we need data in streams not json
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  webhookCheckout
+);
 
 //body parser, plus limit incomming data to 10 kb.
 app.use(
